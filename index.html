@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Hello World</title>
+
+<!-- Lightweight Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+  body {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+    height: 100vh; 
+    margin: 0; 
+    font-family: system-ui, -apple-system, sans-serif; 
+    color: #fff;
+    /* Default is the Irish Flag for English */
+    background: linear-gradient(135deg, #169b62, #ffffff, #ff883e); 
+    transition: background 0.8s ease-in-out;
+    overflow: hidden;
+  }
+  
+  h1 {
+    font-size: 4rem; 
+    text-align: center; 
+    margin-bottom: 10px;
+    animation: float 3s ease-in-out infinite;
+    /* Heavy text shadow to ensure it reads well over the white parts of the flags */
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.7);
+  }
+
+  .controls { 
+    display: flex; 
+    gap: 15px; 
+    margin-top: 30px; 
+    flex-wrap: wrap; 
+    justify-content: center;
+  }
+  
+  button {
+    padding: 12px 24px; 
+    border: none; 
+    border-radius: 50px;
+    background: rgba(0, 0, 0, 0.6); 
+    color: #fff; 
+    font-size: 1.1rem; 
+    font-weight: 600;
+    cursor: pointer; 
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(5px); 
+    display: flex; 
+    align-items: center; 
+    gap: 8px;
+  }
+  
+  button:hover { 
+    background: rgba(0, 0, 0, 0.8); 
+    transform: translateY(-3px); 
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5); 
+  }
+  
+  button:active { 
+    transform: translateY(1px) scale(0.95); 
+  }
+  
+  @keyframes float { 
+    0%, 100% { transform: translateY(0); } 
+    50% { transform: translateY(-15px); } 
+  }
+</style>
+</head>
+<body>
+
+<h1 id="hw">Hello World</h1>
+<div class="controls">
+  <button onclick="sw()"><span>🔄</span> Switch Language</button>
+  <button onclick="sp()"><span>🗣️</span> Speak</button>
+</div>
+
+<script>
+  // English (with Irish flag & accent), Estonian, and French
+  const data = [
+    { t: "Hello World", bg: "linear-gradient(135deg, #169b62, #ffffff, #ff883e)", lang: "en-IE" },
+    { t: "Tere Maailm", bg: "linear-gradient(135deg, #0072ce, #000000, #ffffff)", lang: "et-EE" },
+    { t: "Bonjour le monde", bg: "linear-gradient(135deg, #002654, #ffffff, #ed2939)", lang: "fr-FR" }
+  ];
+  
+  let i = 0;
+  
+  const sw = () => {
+    i = (i + 1) % data.length;
+    const current = data[i];
+    
+    // Update Text & Background
+    document.getElementById("hw").textContent = current.t;
+    document.body.style.background = current.bg;
+    
+    // Trigger lightweight Confetti Burst
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      zIndex: 100
+    });
+  };
+
+  const sp = () => {
+    // Cancel any currently playing speech to prevent overlapping
+    window.speechSynthesis.cancel();
+    
+    const current = data[i];
+    const utterance = new SpeechSynthesisUtterance(current.t);
+    utterance.lang = current.lang; // Assigns the correct language/accent
+    utterance.rate = 0.85; // Slightly slower pacing sounds more natural
+    
+    window.speechSynthesis.speak(utterance);
+  };
+</script>
+</body>
+</html>
